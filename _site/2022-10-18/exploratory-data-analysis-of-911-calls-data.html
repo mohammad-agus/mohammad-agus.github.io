@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>M.A.</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" type="text/css" href="/assets/css/fontawesome-all.min.css">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon.ico">
+
+  <!-- Google Analytics -->
+  
+  <script>
+      (function(i, s, o, g, r, a, m) {
+          i['GoogleAnalyticsObject'] = r;
+          i[r] = i[r] || function() {
+              (i[r].q = i[r].q || []).push(arguments)
+          }, i[r].l = 1 * new Date();
+          a = s.createElement(o),
+              m = s.getElementsByTagName(o)[0];
+          a.async = 1;
+          a.src = g;
+          m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', 'G-NKY0QRYQND', 'auto');
+      ga('send', 'pageview');
+
+  </script>
+  
+
+</head>
+
+
+  <body>
+    <nav class="nav">
+      <div class="nav-container">
+        <a href="/">
+          <h2 class="nav-title">M.A.</h2>
+        </a>
+        <ul>
+          <li><a href="/">About</a></li>
+          <li><a href="/portfolio/">Portfolio</a></li>
+        </ul>
+    </div>
+  </nav>
+
+    <main>
+      <div class="post">
+  <h2 class="post-title">Exploratory Data Analysis of 911 Calls Data</h2>
+  <div class="post-line"></div>
+
+  <p>This project is a data capstone project which is part of Udemy course: <a href="https://www.udemy.com/course/python-for-data-science-and-machine-learning-bootcamp/">Python for Data Science and Machine Learning</a> by <a href="https://www.udemy.com/user/joseportilla/">Jose Portilla</a>. This capstone project is about analyzing some 911 call data from <a href="https://www.kaggle.com/mchirico/montcoalert">Kaggle</a> using python libraries such as pandas, matplotlib and seaborn.</p>
+
+<p>The data contains the following fields:</p>
+
+<ul>
+  <li>lat : String variable, Latitude</li>
+  <li>lng: String variable, Longitude</li>
+  <li>desc: String variable, Description of the Emergency Call</li>
+  <li>zip: String variable, Zipcode</li>
+  <li>title: String variable, Title</li>
+  <li>timeStamp: String variable, YYYY-MM-DD HH:MM:SS</li>
+  <li>twp: String variable, Township</li>
+  <li>addr: String variable, Address</li>
+  <li>e: String variable, Dummy variable (always 1)</li>
+</ul>
+
+<h2 id="data-and-setup">Data and Setup</h2>
+
+<hr />
+<p><strong>Import libraries and set <code class="language-plaintext highlighter-rouge">%matplotlib inline</code></strong><b></b></p>
+
+<p>Python predefined (magic) function <code class="language-plaintext highlighter-rouge">%matplotlib inline</code> is used to enable the inline plotting, where the plots/graphs will be displayed just below the cell where plotting commands are written.<br /><em>Source:</em> <a href="https://pythonguides.com/what-is-matplotlib-inline/">pythonguides.com</a></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="n">sns</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+</code></pre></div></div>
+
+<p><strong>Read data</strong><b></b></p>
+
+<p>Read in the csv file as a dataframe called df.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'911.csv'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><br /><strong>df DataFrame Summary</strong><br /></p>
+
+<p>Check the head of df.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=8&amp;hideInput=true" title="Jovian Viewer" height="486" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>Check info() of df dataframe.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">info</span><span class="p">()</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=10&amp;hideInput=true" title="Jovian Viewer" height="539" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>Check number of NA value.<br />
+Using <code class="language-plaintext highlighter-rouge">isna()</code> to generate boolean value (True if NA and False if non-NA) then using <code class="language-plaintext highlighter-rouge">sum()</code> to sum up all the True value.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">isna</span><span class="p">().</span><span class="nb">sum</span><span class="p">()</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=12&amp;hideInput=true" title="Jovian Viewer" height="353" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>There are 3 columns that has NA value (zip, twp, addr).</p>
+
+<p>Value counts of zipcodes for 911 calls.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'zip'</span><span class="p">].</span><span class="n">value_counts</span><span class="p">().</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=15&amp;hideInput=true" title="Jovian Viewer" height="311" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>Value counts of townships (twp) for 911 calls.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'twp'</span><span class="p">].</span><span class="n">value_counts</span><span class="p">().</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=17&amp;hideInput=true" title="Jovian Viewer" height="311" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>Number of unique value in the title column.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'title'</span><span class="p">].</span><span class="n">nunique</span><span class="p">()</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=19&amp;hideInput=true" title="Jovian Viewer" height="80" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<h2 id="creating-new-features">Creating new features</h2>
+
+<p>In the titles column there are “Reasons/Departments” specified before the title code. These are EMS, Fire, and Traffic. For example, if the title column value is EMS: BACK PAINS/INJURY, the reason column value would be EMS.<br /></p>
+
+<p>Next step is creating a function (first method), to split of each string value in title column by ‘:’ character, append the first index of it into empty list then assign the list as a new column (‘reason’).</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">func_split</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+        <span class="n">b</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">':'</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">b</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s">'reason'</span><span class="p">]</span> <span class="o">=</span> <span class="n">func_split</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">'title'</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>Second method is using <code class="language-plaintext highlighter-rouge">apply()</code> with a custom lambda expression.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'reason'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">'title'</span><span class="p">].</span><span class="nb">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">':'</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>The most common reason for a 911 call based off of the reason column.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'reason'</span><span class="p">].</span><span class="n">value_counts</span><span class="p">()</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=26&amp;hideInput=true" title="Jovian Viewer" height="143" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>Create a countplot of 911 calls by reason. In this plot, set <code class="language-plaintext highlighter-rouge">palette='viridis'</code> and because of seaborn is a library built on top of matplotlib, matplotlib’s colormaps can be use to change color style of seaborn’s plot (<a href="https://matplotlib.org/stable/tutorials/colors/colormaps.html">more built-in matplotlib colormaps</a>).</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sns</span><span class="p">.</span><span class="n">countplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">'reason'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s">'viridis'</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=28&amp;hideInput=true" title="Jovian Viewer" height="380" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<hr />
+<p><strong>Time information</strong><br />
+The data type of the objects in the timeStamp column.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">'timeStamp'</span><span class="p">].</span><span class="n">dtypes</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=30&amp;hideInput=true" title="Jovian Viewer" height="83" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>The timestamps are still strings (objects). Use <a href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.to_datetime.html"><code class="language-plaintext highlighter-rouge">pd.to_datetime</code></a> to convert the column from strings to DateTime objects.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'timeStamp'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">'timeStamp'</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>Grab specific attributes from a Datetime object by calling them. For example:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>time = df['timeStamp'].iloc[0]
+time.hour
+</code></pre></div></div>
+
+<p>Jupyter’s tab method can be use to explore the various attributes. Now that the timestamp column are actually DateTime objects, use <code class="language-plaintext highlighter-rouge">.apply()</code> to create 3 new columns called Hour, Month, and Day of Week.</p>
+
+<p>Notice how the Day of Week is an integer 0-6. Use the <code class="language-plaintext highlighter-rouge">.map()</code> with ‘dmap’ dictionary to map the actual string names to the day of the week:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">dmap</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s">'Mon'</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="s">'Tue'</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s">'Wed'</span><span class="p">,</span><span class="mi">3</span><span class="p">:</span><span class="s">'Thu'</span><span class="p">,</span><span class="mi">4</span><span class="p">:</span><span class="s">'Fri'</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="s">'Sat'</span><span class="p">,</span><span class="mi">6</span><span class="p">:</span><span class="s">'Sun'</span><span class="p">}</span>
+<span class="n">df</span><span class="p">[</span><span class="s">'Hour'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">'timeStamp'</span><span class="p">].</span><span class="nb">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">.</span><span class="n">hour</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s">'Day of Week'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">'timeStamp'</span><span class="p">].</span><span class="nb">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">.</span><span class="n">day_of_week</span><span class="p">).</span><span class="nb">map</span><span class="p">(</span><span class="n">dmap</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s">'Month'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">'timeStamp'</span><span class="p">].</span><span class="nb">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">.</span><span class="n">month</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=36&amp;hideInput=true" title="Jovian Viewer" height="512" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p><strong>Create a countplot of the Day of Week column with the hue based off of the reason column</strong></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sns</span><span class="p">.</span><span class="n">countplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">'Day of Week'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s">'reason'</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s">'viridis'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=38&amp;hideInput=true" title="Jovian Viewer" height="342" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>The same for Month.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sns</span><span class="p">.</span><span class="n">countplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">'Month'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s">'reason'</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s">'viridis'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=40&amp;hideInput=true" title="Jovian Viewer" height="342" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<hr />
+
+<p>The plot was missing some Months, fill this information by plotting the information in another way, possibly a simple line plot that fills in the missing months.</p>
+
+<p><strong>Create a groupby object called ‘byMonth’ and it’s visualizations</strong><br />
+The DataFrame is grouping by the month column and using the <code class="language-plaintext highlighter-rouge">count()</code> method for aggregation.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">byMonth</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'Month'</span><span class="p">).</span><span class="n">count</span><span class="p">()</span>
+<span class="n">byMonth</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=43&amp;hideInput=true" title="Jovian Viewer" height="393" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>Create a simple plot of the dataframe indicating the count of calls per month.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">byMonth</span><span class="p">[</span><span class="s">'twp'</span><span class="p">].</span><span class="n">plot</span><span class="p">()</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=45&amp;hideInput=true" title="Jovian Viewer" height="342" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>Use seaborn’s <code class="language-plaintext highlighter-rouge">lmplot()</code> to create a linear fit on the number of calls per month. In order to create <code class="language-plaintext highlighter-rouge">lmplot()</code>, the index has to reset to be a new column.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">byMonth</span><span class="p">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">sns</span><span class="p">.</span><span class="n">lmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">'Month'</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">'twp'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">byMonth</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=47&amp;hideInput=true" title="Jovian Viewer" height="432" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p><strong>Create a new column called ‘Date’ that contains the date from ‘timeStamp’ column</strong></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'Date'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">'timeStamp'</span><span class="p">].</span><span class="nb">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">.</span><span class="n">date</span><span class="p">())</span>
+</code></pre></div></div>
+
+<p>Groupby Date column with the <code class="language-plaintext highlighter-rouge">count()</code> aggregate and create a plot of counts of 911 calls.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">df</span><span class="p">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'Date'</span><span class="p">)[</span><span class="s">'twp'</span><span class="p">].</span><span class="n">count</span><span class="p">().</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div></div>
+
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=51&amp;hideInput=true" title="Jovian Viewer" height="382" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>Recreate above plot but create 3 separate plots with each plot representing a reason for the 911 call.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">'reason'</span><span class="p">]</span><span class="o">==</span><span class="s">'Traffic'</span><span class="p">].</span><span class="n">groupby</span><span class="p">(</span><span class="s">'Date'</span><span class="p">)[</span><span class="s">'twp'</span><span class="p">].</span><span class="n">count</span><span class="p">().</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Traffic'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div></div>
+
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=53&amp;hideInput=true" title="Jovian Viewer" height="382" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">'reason'</span><span class="p">]</span><span class="o">==</span><span class="s">'Fire'</span><span class="p">].</span><span class="n">groupby</span><span class="p">(</span><span class="s">'Date'</span><span class="p">)[</span><span class="s">'twp'</span><span class="p">].</span><span class="n">count</span><span class="p">().</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Fire'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div></div>
+
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=54&amp;hideInput=true" title="Jovian Viewer" height="382" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">'reason'</span><span class="p">]</span><span class="o">==</span><span class="s">'EMS'</span><span class="p">].</span><span class="n">groupby</span><span class="p">(</span><span class="s">'Date'</span><span class="p">)[</span><span class="s">'twp'</span><span class="p">].</span><span class="n">count</span><span class="p">().</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'EMS'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div></div>
+
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=55&amp;hideInput=true" title="Jovian Viewer" height="382" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<hr />
+<p><strong>Create heatmap and clustermap using restructured df dataframe</strong><br />
+First the dataframe need to be restructured, so that the columns become the Hours and the Index becomes the Day of the Week. There are lots of ways to do this, but in this time <code class="language-plaintext highlighter-rouge">pivot_table()</code> and use <code class="language-plaintext highlighter-rouge">aggfunc='count'</code> will be use.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">dayHour</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s">'Day of Week'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s">'Hour'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s">'twp'</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s">'count'</span><span class="p">)</span>
+<span class="n">dayHour</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=57&amp;hideInput=true" title="Jovian Viewer" height="354" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>Create a heatmap using the dayHour dataframe.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">sns</span><span class="p">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dayHour</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'plasma'</span><span class="p">).</span><span class="n">tick_params</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=59&amp;hideInput=true" title="Jovian Viewer" height="415" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>Create a clustermap using the dayHour dataframe.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sns</span><span class="p">.</span><span class="n">clustermap</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dayHour</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'plasma'</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">8.5</span><span class="p">,</span><span class="mi">8</span><span class="p">)).</span><span class="n">tick_params</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=61&amp;hideInput=true" title="Jovian Viewer" height="648" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<p>Repeat these same plots and operations, for a dataframe that shows the Month as the column.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">dayMonth</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s">'Day of Week'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s">'Month'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s">'twp'</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s">'count'</span><span class="p">)</span>
+<span class="n">dayMonth</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=63&amp;hideInput=true" title="Jovian Viewer" height="265" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">sns</span><span class="p">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dayMonth</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'plasma'</span><span class="p">).</span><span class="n">tick_params</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=64&amp;hideInput=true" title="Jovian Viewer" height="415" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sns</span><span class="p">.</span><span class="n">clustermap</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dayMonth</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">'plasma'</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">8.5</span><span class="p">,</span><span class="mi">8</span><span class="p">)).</span><span class="n">tick_params</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<iframe src="https://jovian.ai/embed?url=https://jovian.ai/mohammadagus1st/exploratory-analysis-of-911-calls-data/v/1&amp;cellId=65&amp;hideInput=true" title="Jovian Viewer" height="648" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+
+</div>
+
+<div class="pagination">
+  
+    <a href="/2023-02-16/handling_outliers_and_missing_values_in_python" class="left next">Prev</a>
+  
+  
+
+  <a href="#" class="top">Top</a>
+</div>
+
+    </main>
+
+    <footer>
+      <span>
+        &copy; <time datetime="2023-06-05 01:29:53 +0800">2023</time> <!--Moh. Agus. <a href="https://github.com/kssim/about-portfolio/">A.P</a> theme by kssim.-->
+      </span>
+    </footer>
+  </body>
+</html>

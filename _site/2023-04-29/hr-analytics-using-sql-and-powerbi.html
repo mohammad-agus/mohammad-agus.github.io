@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>M.A.</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" type="text/css" href="/assets/css/fontawesome-all.min.css">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon.ico">
+
+  <!-- Google Analytics -->
+  
+  <script>
+      (function(i, s, o, g, r, a, m) {
+          i['GoogleAnalyticsObject'] = r;
+          i[r] = i[r] || function() {
+              (i[r].q = i[r].q || []).push(arguments)
+          }, i[r].l = 1 * new Date();
+          a = s.createElement(o),
+              m = s.getElementsByTagName(o)[0];
+          a.async = 1;
+          a.src = g;
+          m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', 'G-NKY0QRYQND', 'auto');
+      ga('send', 'pageview');
+
+  </script>
+  
+
+</head>
+
+
+  <body>
+    <nav class="nav">
+      <div class="nav-container">
+        <a href="/">
+          <h2 class="nav-title">M.A.</h2>
+        </a>
+        <ul>
+          <li><a href="/">About</a></li>
+          <li><a href="/portfolio/">Portfolio</a></li>
+        </ul>
+    </div>
+  </nav>
+
+    <main>
+      <div class="post">
+  <h2 class="post-title">Human Resources Analytics Using SQL & Power BI</h2>
+  <div class="post-line"></div>
+
+  <p>The objectives of this project are to analyze human resources dataset and build an interactive visualization (dashboard) using SQL and Microsoft Power BI. Below is the generated dashboard of this project, which contains pages that consist of :</p>
+<ul>
+  <li>Employees Diversity</li>
+  <li>Retention Analysis</li>
+  <li>Salary Analysis</li>
+  <li>Salary Details (sub-page of Salary Analysis)</li>
+</ul>
+
+<p><br /></p>
+<center><iframe title="HRAnalytics" width="927" height="620" src="https://app.powerbi.com/view?r=eyJrIjoiZGU0NmI5MTAtZTFiYy00NGY2LWExYjEtNDkzN2YzMDY4ZTlhIiwidCI6IjA0NmI4YzU4LWFhNTEtNGY2NC04M2RlLWU1NjczZTY0NmY4NiIsImMiOjEwfQ%3D%3D" frameborder="0" allowfullscreen="true"></iframe></center>
+<p><br /></p>
+
+<p>This project dataset consists of the dataset from Kaggle (<a href="https://www.kaggle.com/datasets/koluit/human-resource-data-set-the-company">The Company</a>) in <code class="language-plaintext highlighter-rouge">.txt</code> format (imported as the database tables in SQL Server Management Studio or SSMS), and generated dataset from SQL query. All of the data in this project are connected from SQL Server Management Studio to Power BI. Here are the dataset that was imported from the original source on Kaggle to SSMS.</p>
+<ul>
+  <li>CompanyData.txt (<code class="language-plaintext highlighter-rouge">EmployeeTable</code>)</li>
+  <li>Diversity.txt (<code class="language-plaintext highlighter-rouge">EmployeeDiversity</code>)</li>
+</ul>
+
+<h1 id="exploratory-data-analysis-in-sql">Exploratory Data Analysis in SQL</h1>
+
+<p>There are several pre-visualization analyses that were conducted using SQL query to get more understanding of the dataset. Some of it will be the sources of Power BI dataset.</p>
+
+<ul>
+  <li>
+    <p>Employee’s age distribution (named <code class="language-plaintext highlighter-rouge">AgeGroup</code> dataset as a Power BI data source)</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="n">EmployeeID</span><span class="p">,</span> 
+                      <span class="k">CASE</span>
+                          <span class="k">WHEN</span> <span class="n">Age</span> <span class="o">&lt;=</span> <span class="mi">20</span> <span class="k">THEN</span> <span class="s1">'20 and below'</span>
+                          <span class="k">WHEN</span> <span class="n">Age</span> <span class="k">BETWEEN</span> <span class="mi">21</span> <span class="k">AND</span> <span class="mi">30</span> <span class="k">THEN</span> <span class="s1">'21-30'</span>
+                          <span class="k">WHEN</span> <span class="n">Age</span> <span class="k">BETWEEN</span> <span class="mi">31</span> <span class="k">AND</span> <span class="mi">40</span> <span class="k">THEN</span> <span class="s1">'31-40'</span>
+                          <span class="k">WHEN</span> <span class="n">Age</span> <span class="k">BETWEEN</span> <span class="mi">41</span> <span class="k">AND</span> <span class="mi">50</span> <span class="k">THEN</span> <span class="s1">'41-50'</span>
+                          <span class="k">WHEN</span> <span class="n">Age</span> <span class="k">BETWEEN</span> <span class="mi">51</span> <span class="k">AND</span> <span class="mi">60</span> <span class="k">THEN</span> <span class="s1">'51-60'</span>
+                          <span class="k">ELSE</span> <span class="s1">'61 and above'</span> <span class="k">END</span> <span class="k">AS</span> <span class="n">AgeGroup</span>
+  <span class="k">FROM</span> <span class="n">EmployeeTable</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Number of new employee of by year and office</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">WITH</span> <span class="n">cte</span> <span class="k">AS</span>
+  <span class="p">(</span>
+  <span class="k">SELECT</span>
+      <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="k">AS</span> <span class="nb">Year</span><span class="p">,</span>
+      <span class="n">Office</span><span class="p">,</span>
+      <span class="k">COUNT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">))</span> <span class="k">AS</span> <span class="n">NewHire</span><span class="p">,</span>
+      <span class="n">RANK</span><span class="p">()</span> <span class="n">OVER</span><span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">COUNT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">))</span> <span class="k">DESC</span><span class="p">)</span> <span class="k">AS</span> <span class="n">RankofMostHireOffice</span><span class="p">,</span>
+      <span class="n">RANK</span><span class="p">()</span> <span class="n">OVER</span><span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">COUNT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">))</span> <span class="k">ASC</span><span class="p">)</span> <span class="k">AS</span> <span class="n">RankofLeastHireOffice</span>
+  <span class="k">FROM</span> <span class="n">EmployeeTable</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">),</span> <span class="n">Office</span>
+  <span class="p">)</span>
+  <span class="k">SELECT</span> <span class="nb">Year</span><span class="p">,</span> <span class="n">Office</span><span class="p">,</span> <span class="n">NewHire</span>
+  <span class="k">FROM</span> <span class="n">cte</span>
+  <span class="k">WHERE</span> <span class="n">RankofMostHireOffice</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">OR</span> <span class="n">RankofLeastHireOffice</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">ORDER</span> <span class="k">BY</span> <span class="nb">Year</span><span class="p">,</span> <span class="n">NewHire</span> <span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Number of new employees by year and department</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">WITH</span> <span class="n">cte</span> <span class="k">AS</span>
+  <span class="p">(</span>
+  <span class="k">SELECT</span>
+      <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="k">AS</span> <span class="nb">Year</span><span class="p">,</span>
+      <span class="n">Department</span><span class="p">,</span>
+      <span class="k">COUNT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">))</span> <span class="k">AS</span> <span class="n">NewHire</span><span class="p">,</span>
+      <span class="n">RANK</span><span class="p">()</span> <span class="n">OVER</span><span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">COUNT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">))</span> <span class="k">DESC</span><span class="p">)</span> <span class="k">AS</span> <span class="n">RankofMostHireDepartment</span><span class="p">,</span>
+      <span class="n">RANK</span><span class="p">()</span> <span class="n">OVER</span><span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">COUNT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">))</span> <span class="k">ASC</span><span class="p">)</span> <span class="k">AS</span> <span class="n">RankofLeastHireDepartment</span>
+  <span class="k">FROM</span> <span class="n">EmployeeTable</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">),</span> <span class="n">Department</span>
+  <span class="p">)</span>
+  <span class="k">SELECT</span> <span class="nb">Year</span><span class="p">,</span> <span class="n">Department</span><span class="p">,</span> <span class="n">NewHire</span>
+  <span class="k">FROM</span> <span class="n">cte</span>
+  <span class="k">WHERE</span> <span class="n">RankofMostHireDepartment</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">OR</span> <span class="n">RankofLeastHireDepartment</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">ORDER</span> <span class="k">BY</span> <span class="nb">Year</span><span class="p">,</span> <span class="n">NewHire</span> <span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Yearly employees retention rate</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">WITH</span> <span class="n">cte</span> <span class="k">AS</span>
+  <span class="p">(</span>
+  <span class="k">SELECT</span>
+      <span class="n">sq1</span><span class="p">.</span><span class="nb">Year</span><span class="p">,</span>
+      <span class="k">ISNULL</span><span class="p">(</span><span class="n">sq2</span><span class="p">.</span><span class="n">num_hire</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">AS</span> <span class="n">new_hired</span><span class="p">,</span>
+      <span class="k">SUM</span><span class="p">(</span><span class="n">sq2</span><span class="p">.</span><span class="n">num_hire</span><span class="p">)</span> <span class="n">OVER</span> <span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="n">sq1</span><span class="p">.</span><span class="nb">Year</span><span class="p">)</span> <span class="n">cum_new_hired</span><span class="p">,</span>
+      <span class="k">ISNULL</span><span class="p">(</span><span class="n">sq3</span><span class="p">.</span><span class="n">terminated</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">AS</span> <span class="n">terminated</span><span class="p">,</span>
+      <span class="k">ISNULL</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">sq3</span><span class="p">.</span><span class="n">terminated</span><span class="p">)</span> <span class="n">OVER</span> <span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="n">sq1</span><span class="p">.</span><span class="nb">Year</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span> <span class="n">cum_terminated</span>
+  <span class="k">FROM</span>
+          <span class="p">(</span>
+              <span class="k">SELECT</span> <span class="k">DISTINCT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">))</span> <span class="k">as</span> <span class="nb">Year</span>
+              <span class="k">FROM</span> <span class="n">EmployeeTable</span>
+              <span class="k">UNION</span>
+              <span class="k">SELECT</span> <span class="k">DISTINCT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Termination_Date</span><span class="p">))</span>
+              <span class="k">FROM</span> <span class="n">EmployeeTable</span>
+          <span class="p">)</span> <span class="n">sq1</span>
+      <span class="k">LEFT</span> <span class="k">JOIN</span> 
+          <span class="p">(</span>
+              <span class="k">SELECT</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="k">as</span> <span class="nb">Year</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">))</span> <span class="k">as</span> <span class="n">num_hire</span>
+              <span class="k">FROM</span> <span class="n">EmployeeTable</span>
+              <span class="k">GROUP</span> <span class="k">BY</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span>
+          <span class="p">)</span> <span class="n">sq2</span>
+      <span class="k">ON</span> <span class="n">sq1</span><span class="p">.</span><span class="nb">Year</span> <span class="o">=</span> <span class="n">sq2</span><span class="p">.</span><span class="nb">Year</span>
+      <span class="k">LEFT</span> <span class="k">JOIN</span>
+          <span class="p">(</span>
+              <span class="k">SELECT</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Termination_Date</span><span class="p">)</span> <span class="k">as</span> <span class="nb">Year</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Termination_Date</span><span class="p">))</span> <span class="k">as</span> <span class="n">terminated</span>
+              <span class="k">FROM</span> <span class="n">EmployeeTable</span>
+              <span class="k">GROUP</span> <span class="k">BY</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Termination_Date</span><span class="p">)</span>
+          <span class="p">)</span> <span class="n">sq3</span>
+      <span class="k">ON</span> <span class="n">sq1</span><span class="p">.</span><span class="nb">Year</span> <span class="o">=</span> <span class="n">sq3</span><span class="p">.</span><span class="nb">Year</span>
+      <span class="k">WHERE</span> <span class="n">sq1</span><span class="p">.</span><span class="nb">Year</span> <span class="o">!=</span> <span class="mi">2999</span>
+  <span class="p">)</span>   
+  <span class="k">SELECT</span>
+      <span class="n">cte</span><span class="p">.</span><span class="nb">Year</span><span class="p">,</span>
+      <span class="k">ISNULL</span><span class="p">(</span><span class="n">LAG</span><span class="p">((</span><span class="n">cte</span><span class="p">.</span><span class="n">cum_new_hired</span> <span class="o">-</span> <span class="n">cte</span><span class="p">.</span><span class="n">cum_terminated</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span> <span class="n">OVER</span><span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="n">cte</span><span class="p">.</span><span class="nb">Year</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="k">AS</span> <span class="n">employee_start</span><span class="p">,</span>
+      <span class="n">cte</span><span class="p">.</span><span class="n">new_hired</span><span class="p">,</span> <span class="n">cte</span><span class="p">.</span><span class="n">terminated</span><span class="p">,</span>
+      <span class="n">cte</span><span class="p">.</span><span class="n">cum_new_hired</span> <span class="o">-</span> <span class="n">cte</span><span class="p">.</span><span class="n">cum_terminated</span> <span class="k">AS</span> <span class="n">employee_end</span><span class="p">,</span>
+      <span class="n">ROUND</span><span class="p">(((</span><span class="k">CAST</span><span class="p">(</span><span class="n">cte</span><span class="p">.</span><span class="n">cum_new_hired</span> <span class="k">AS</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">cte</span><span class="p">.</span><span class="n">cum_terminated</span> <span class="o">-</span> <span class="n">cte</span><span class="p">.</span><span class="n">new_hired</span><span class="p">)</span> <span class="o">/</span>
+      <span class="n">LAG</span><span class="p">((</span><span class="n">cte</span><span class="p">.</span><span class="n">cum_new_hired</span> <span class="o">-</span> <span class="n">cte</span><span class="p">.</span><span class="n">cum_terminated</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span> <span class="n">OVER</span><span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="n">cte</span><span class="p">.</span><span class="nb">Year</span><span class="p">)),</span> <span class="mi">4</span><span class="p">)</span>  <span class="k">AS</span> <span class="n">retention_rate</span>
+  <span class="k">FROM</span> <span class="n">cte</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Yearly employees rate (highest &amp; lowest) by department</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">WITH</span> <span class="n">cte</span> <span class="k">AS</span>
+  <span class="p">(</span>
+  <span class="k">SELECT</span>
+      <span class="n">sq5</span><span class="p">.</span><span class="nb">Year</span><span class="p">,</span>
+      <span class="n">sq5</span><span class="p">.</span><span class="n">Department</span><span class="p">,</span>
+      <span class="n">sq5</span><span class="p">.</span><span class="n">retention_rate</span><span class="p">,</span>
+      <span class="n">DENSE_RANK</span><span class="p">()</span> <span class="n">OVER</span><span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">sq5</span><span class="p">.</span><span class="nb">Year</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">sq5</span><span class="p">.</span><span class="n">retention_rate</span> <span class="k">DESC</span><span class="p">)</span> <span class="k">AS</span> <span class="n">highest_rr</span><span class="p">,</span>
+      <span class="n">DENSE_RANK</span><span class="p">()</span> <span class="n">OVER</span><span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">sq5</span><span class="p">.</span><span class="nb">Year</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">sq5</span><span class="p">.</span><span class="n">retention_rate</span><span class="p">)</span> <span class="k">AS</span> <span class="n">lowest_rr</span>
+  <span class="k">FROM</span>
+  <span class="p">(</span>
+      <span class="k">SELECT</span>
+          <span class="n">sq4</span><span class="p">.</span><span class="n">Department</span><span class="p">,</span>
+          <span class="n">sq4</span><span class="p">.</span><span class="nb">Year</span><span class="p">,</span>
+          <span class="n">sq4</span><span class="p">.</span><span class="n">new_hired</span><span class="p">,</span>
+          <span class="n">sq4</span><span class="p">.</span><span class="n">terminated</span><span class="p">,</span>
+          <span class="k">ISNULL</span><span class="p">(</span><span class="n">LAG</span><span class="p">((</span><span class="n">sq4</span><span class="p">.</span><span class="n">cum_new_hired</span> <span class="o">-</span> <span class="n">sq4</span><span class="p">.</span><span class="n">cum_terminated</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+              <span class="n">OVER</span><span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">sq4</span><span class="p">.</span><span class="n">Department</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">sq4</span><span class="p">.</span><span class="n">Department</span><span class="p">,</span> <span class="n">sq4</span><span class="p">.</span><span class="nb">Year</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="k">AS</span> <span class="n">employee_start</span><span class="p">,</span>
+          <span class="n">sq4</span><span class="p">.</span><span class="n">cum_new_hired</span> <span class="o">-</span> <span class="n">sq4</span><span class="p">.</span><span class="n">cum_terminated</span> <span class="k">AS</span> <span class="n">employee_end</span><span class="p">,</span>
+          <span class="k">CASE</span>
+              <span class="k">WHEN</span> 
+                  <span class="n">ROUND</span><span class="p">(((</span><span class="k">CAST</span><span class="p">(</span><span class="n">sq4</span><span class="p">.</span><span class="n">cum_new_hired</span> <span class="k">AS</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">sq4</span><span class="p">.</span><span class="n">cum_terminated</span> <span class="o">-</span> <span class="n">sq4</span><span class="p">.</span><span class="n">new_hired</span><span class="p">)</span> <span class="o">/</span>
+                  <span class="n">LAG</span><span class="p">((</span><span class="n">sq4</span><span class="p">.</span><span class="n">cum_new_hired</span> <span class="o">-</span> <span class="n">sq4</span><span class="p">.</span><span class="n">cum_terminated</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span> 
+                  <span class="n">OVER</span><span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">sq4</span><span class="p">.</span><span class="n">Department</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">sq4</span><span class="p">.</span><span class="n">Department</span><span class="p">,</span> <span class="n">sq4</span><span class="p">.</span><span class="nb">Year</span><span class="p">)),</span> <span class="mi">4</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">THEN</span> <span class="mi">0</span>
+              <span class="k">ELSE</span>
+                  <span class="n">ROUND</span><span class="p">(((</span><span class="k">CAST</span><span class="p">(</span><span class="n">sq4</span><span class="p">.</span><span class="n">cum_new_hired</span> <span class="k">AS</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">sq4</span><span class="p">.</span><span class="n">cum_terminated</span> <span class="o">-</span> <span class="n">sq4</span><span class="p">.</span><span class="n">new_hired</span><span class="p">)</span> <span class="o">/</span>
+                  <span class="n">LAG</span><span class="p">((</span><span class="n">sq4</span><span class="p">.</span><span class="n">cum_new_hired</span> <span class="o">-</span> <span class="n">sq4</span><span class="p">.</span><span class="n">cum_terminated</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+                  <span class="n">OVER</span><span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">sq4</span><span class="p">.</span><span class="n">Department</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">sq4</span><span class="p">.</span><span class="n">Department</span><span class="p">,</span><span class="n">sq4</span><span class="p">.</span><span class="nb">Year</span><span class="p">)),</span> <span class="mi">4</span><span class="p">)</span>
+              <span class="k">END</span> <span class="k">AS</span> <span class="n">retention_rate</span>
+      <span class="k">FROM</span> 
+          <span class="p">(</span>
+          <span class="k">SELECT</span> <span class="k">DISTINCT</span>
+              <span class="n">sq1</span><span class="p">.</span><span class="n">Department</span><span class="p">,</span>
+              <span class="n">sq1</span><span class="p">.</span><span class="nb">Year</span><span class="p">,</span>
+              <span class="k">ISNULL</span><span class="p">(</span><span class="n">sq2</span><span class="p">.</span><span class="n">num_hire</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">AS</span> <span class="n">new_hired</span><span class="p">,</span>
+              <span class="k">SUM</span><span class="p">(</span><span class="n">sq2</span><span class="p">.</span><span class="n">num_hire</span><span class="p">)</span> <span class="n">OVER</span> <span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">sq1</span><span class="p">.</span><span class="n">Department</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">sq1</span><span class="p">.</span><span class="n">Department</span><span class="p">,</span> <span class="n">sq1</span><span class="p">.</span><span class="nb">Year</span><span class="p">)</span> <span class="k">AS</span> <span class="n">cum_new_hired</span><span class="p">,</span>
+              <span class="k">ISNULL</span><span class="p">(</span><span class="n">sq3</span><span class="p">.</span><span class="n">terminated</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">AS</span> <span class="n">terminated</span><span class="p">,</span>
+              <span class="k">ISNULL</span><span class="p">(</span><span class="k">SUM</span><span class="p">(</span><span class="n">sq3</span><span class="p">.</span><span class="n">terminated</span><span class="p">)</span> <span class="n">OVER</span> <span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">sq1</span><span class="p">.</span><span class="n">Department</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">sq1</span><span class="p">.</span><span class="n">Department</span><span class="p">,</span> <span class="n">sq1</span><span class="p">.</span><span class="nb">Year</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span> <span class="k">AS</span> <span class="n">cum_terminated</span>
+          <span class="k">FROM</span>
+              <span class="p">(</span>
+                  <span class="k">SELECT</span> <span class="k">DISTINCT</span> <span class="n">Department</span><span class="p">,</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="k">as</span> <span class="nb">Year</span>
+                  <span class="k">FROM</span> <span class="n">EmployeeTable</span>
+                  <span class="k">UNION</span>
+                  <span class="k">SELECT</span> <span class="k">DISTINCT</span> <span class="n">Department</span><span class="p">,</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Termination_Date</span><span class="p">)</span> <span class="k">as</span> <span class="nb">Year</span>
+                  <span class="k">FROM</span> <span class="n">EmployeeTable</span>
+              <span class="p">)</span> <span class="n">sq1</span>
+              <span class="k">LEFT</span> <span class="k">JOIN</span> 
+              <span class="p">(</span>
+                  <span class="k">SELECT</span> <span class="n">Department</span><span class="p">,</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="k">as</span> <span class="nb">Year</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">))</span> <span class="k">as</span> <span class="n">num_hire</span>
+                  <span class="k">FROM</span> <span class="n">EmployeeTable</span>
+                  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">Department</span><span class="p">,</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span>
+              <span class="p">)</span> <span class="n">sq2</span>
+              <span class="k">ON</span> <span class="n">sq1</span><span class="p">.</span><span class="nb">Year</span> <span class="o">=</span> <span class="n">sq2</span><span class="p">.</span><span class="nb">Year</span> <span class="k">AND</span> <span class="n">sq1</span><span class="p">.</span><span class="n">Department</span> <span class="o">=</span> <span class="n">sq2</span><span class="p">.</span><span class="n">Department</span>
+              <span class="k">LEFT</span> <span class="k">JOIN</span>
+              <span class="p">(</span>
+                  <span class="k">SELECT</span> <span class="n">Department</span><span class="p">,</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Termination_Date</span><span class="p">)</span> <span class="k">as</span> <span class="nb">Year</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Termination_Date</span><span class="p">))</span> <span class="k">as</span> <span class="n">terminated</span>
+                  <span class="k">FROM</span> <span class="n">EmployeeTable</span>
+                  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">Department</span><span class="p">,</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Termination_Date</span><span class="p">)</span>
+              <span class="p">)</span> <span class="n">sq3</span>
+              <span class="k">ON</span> <span class="n">sq1</span><span class="p">.</span><span class="nb">Year</span> <span class="o">=</span> <span class="n">sq3</span><span class="p">.</span><span class="nb">Year</span> <span class="k">AND</span> <span class="n">sq1</span><span class="p">.</span><span class="n">Department</span> <span class="o">=</span> <span class="n">sq3</span><span class="p">.</span><span class="n">Department</span>
+          <span class="p">)</span> <span class="n">sq4</span>
+      <span class="p">)</span> <span class="n">sq5</span>
+  <span class="k">WHERE</span> <span class="n">sq5</span><span class="p">.</span><span class="nb">Year</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">2009</span><span class="p">,</span> <span class="mi">2999</span><span class="p">)</span>
+  <span class="p">)</span>
+  <span class="k">SELECT</span>
+      <span class="n">cte</span><span class="p">.</span><span class="nb">Year</span><span class="p">,</span>
+      <span class="n">cte</span><span class="p">.</span><span class="n">Department</span><span class="p">,</span>
+      <span class="n">cte</span><span class="p">.</span><span class="n">retention_rate</span>
+  <span class="k">FROM</span> <span class="n">cte</span>
+  <span class="c1">--WHERE cte.highest_rr = 1 OR cte.lowest_rr = 1</span>
+  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">cte</span><span class="p">.</span><span class="nb">Year</span><span class="p">,</span> <span class="n">cte</span><span class="p">.</span><span class="n">retention_rate</span> <span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Employee’s yearly salary, bonus and employee details (named <code class="language-plaintext highlighter-rouge">YearlyEmployeeInformations</code> dataset as a Power BI data source)</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">-- Recursive CTE</span>
+    
+  <span class="k">WITH</span> <span class="n">cte</span> <span class="k">AS</span>
+  <span class="p">(</span>
+      <span class="k">SELECT</span>
+          <span class="n">EmployeeID</span><span class="p">,</span> <span class="n">CONCAT</span><span class="p">(</span><span class="n">First_Name</span><span class="p">,</span> <span class="s1">' '</span><span class="p">,</span> <span class="n">Surname</span><span class="p">)</span> <span class="k">AS</span> <span class="n">FullName</span><span class="p">,</span>
+          <span class="n">Office</span><span class="p">,</span> <span class="n">Office_Type</span><span class="p">,</span> <span class="n">Department</span><span class="p">,</span> <span class="k">REPLACE</span><span class="p">(</span><span class="n">Job_title</span><span class="p">,</span> <span class="s1">'"'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span> <span class="k">AS</span> <span class="n">Job_title</span><span class="p">,</span> <span class="k">level</span><span class="p">,</span> <span class="n">Job_Profile</span><span class="p">,</span>
+          <span class="n">Start_Date</span> <span class="k">AS</span> <span class="n">JoinsDate</span><span class="p">,</span> <span class="n">Termination_Date</span> <span class="k">AS</span> <span class="n">LeavesDate</span><span class="p">,</span>
+          <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="k">AS</span> <span class="n">EmpYr</span><span class="p">,</span>
+          <span class="n">DaysInYear</span> <span class="o">=</span> <span class="n">DATEDIFF</span><span class="p">(</span><span class="k">DAY</span><span class="p">,</span> <span class="n">Start_Date</span><span class="p">,</span> <span class="p">(</span><span class="k">CASE</span> <span class="k">WHEN</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="o">=</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Termination_Date</span><span class="p">)</span> <span class="k">THEN</span> <span class="n">Termination_Date</span> <span class="k">ELSE</span> <span class="n">DATEFROMPARTS</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">),</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span> <span class="k">END</span><span class="p">)),</span>
+          <span class="n">Salary</span><span class="p">,</span>
+          <span class="n">Annual_salary</span> <span class="o">=</span> <span class="n">ROUND</span><span class="p">((</span> <span class="k">CAST</span><span class="p">(</span><span class="n">Salary</span> <span class="k">AS</span> <span class="nb">FLOAT</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="mi">365</span> <span class="o">+</span> <span class="p">(</span><span class="k">CASE</span> <span class="k">WHEN</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span><span class="o">%</span><span class="mi">4</span><span class="o">=</span><span class="mi">0</span> <span class="k">THEN</span> <span class="mi">1</span> <span class="k">ELSE</span> <span class="mi">0</span> <span class="k">END</span><span class="p">)))</span> <span class="o">*</span>
+                                  <span class="n">DATEDIFF</span><span class="p">(</span><span class="k">DAY</span><span class="p">,</span> <span class="n">Start_Date</span><span class="p">,</span>
+                                  <span class="p">(</span><span class="k">CASE</span>   <span class="k">WHEN</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">)</span> <span class="o">=</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">Termination_Date</span><span class="p">)</span> <span class="k">THEN</span> <span class="n">Termination_Date</span>
+                                          <span class="k">ELSE</span> <span class="n">DATEFROMPARTS</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">Start_Date</span><span class="p">),</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span> <span class="k">END</span><span class="p">)),</span><span class="mi">2</span><span class="p">),</span>
+          <span class="k">CAST</span><span class="p">(</span><span class="n">Bonus_pct</span> <span class="k">AS</span> <span class="nb">FLOAT</span><span class="p">)</span> <span class="k">AS</span> <span class="n">Bonus_pct</span><span class="p">,</span>
+          <span class="n">Currency</span>
+      <span class="k">FROM</span> <span class="n">EmployeeTable</span>
+    
+      <span class="k">UNION</span> <span class="k">ALL</span>
+    
+      <span class="k">SELECT</span>
+          <span class="n">EmployeeID</span><span class="p">,</span> <span class="n">FullName</span><span class="p">,</span>
+          <span class="n">Office</span><span class="p">,</span> <span class="n">Office_Type</span><span class="p">,</span> <span class="n">Department</span><span class="p">,</span> <span class="n">Job_title</span><span class="p">,</span> <span class="k">level</span><span class="p">,</span> <span class="n">Job_Profile</span><span class="p">,</span>
+          <span class="n">JoinsDate</span><span class="p">,</span> <span class="n">LeavesDate</span><span class="p">,</span>
+          <span class="n">EmpYr</span> <span class="o">=</span> <span class="n">EmpYr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+          <span class="n">DaysInYear</span> <span class="o">=</span> <span class="k">CASE</span>
+                      <span class="k">WHEN</span> <span class="p">(</span><span class="n">EmpYr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">LeavesDate</span><span class="p">)</span> <span class="k">THEN</span> <span class="n">DATEDIFF</span><span class="p">(</span><span class="k">DAY</span><span class="p">,</span> <span class="n">DATEFROMPARTS</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">LeavesDate</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">LeavesDate</span><span class="p">)</span>
+                      <span class="k">ELSE</span> <span class="p">(</span><span class="k">CASE</span> <span class="k">WHEN</span> <span class="p">(</span><span class="n">EmpYr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="o">%</span><span class="mi">4</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">THEN</span> <span class="mi">366</span> <span class="k">ELSE</span> <span class="mi">365</span> <span class="k">END</span><span class="p">)</span> <span class="k">END</span><span class="p">,</span>
+          <span class="n">Salary</span><span class="p">,</span>
+          <span class="n">Annual_salary</span> <span class="o">=</span> <span class="n">ROUND</span><span class="p">((</span><span class="k">CAST</span><span class="p">(</span><span class="n">Salary</span> <span class="k">AS</span> <span class="nb">FLOAT</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="mi">365</span> <span class="o">+</span> <span class="p">(</span><span class="k">CASE</span> <span class="k">WHEN</span> <span class="p">(</span><span class="n">EmpYr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span><span class="mi">4</span><span class="o">=</span><span class="mi">0</span> <span class="k">THEN</span> <span class="mi">1</span> <span class="k">ELSE</span> <span class="mi">0</span> <span class="k">END</span><span class="p">)))</span> <span class="o">*</span>
+                                  <span class="k">CASE</span>
+                                  <span class="k">WHEN</span> <span class="p">(</span><span class="n">EmpYr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">LeavesDate</span><span class="p">)</span> <span class="k">THEN</span> <span class="n">DATEDIFF</span><span class="p">(</span><span class="k">DAY</span><span class="p">,</span> <span class="n">DATEFROMPARTS</span><span class="p">(</span><span class="nb">YEAR</span><span class="p">(</span><span class="n">LeavesDate</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">LeavesDate</span><span class="p">)</span>
+                                  <span class="k">ELSE</span> <span class="p">(</span><span class="k">CASE</span> <span class="k">WHEN</span> <span class="p">(</span><span class="n">EmpYr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span><span class="mi">4</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">THEN</span> <span class="mi">366</span> <span class="k">ELSE</span> <span class="mi">365</span> <span class="k">END</span><span class="p">)</span> <span class="k">END</span> <span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+          <span class="n">Bonus_pct</span><span class="p">,</span>
+          <span class="n">Currency</span>
+      <span class="k">FROM</span> <span class="n">cte</span>
+      <span class="k">WHERE</span> <span class="n">EmpYr</span> <span class="o">&lt;</span> <span class="mi">2022</span> <span class="k">AND</span> <span class="n">EmpYr</span> <span class="o">&lt;</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">LeavesDate</span><span class="p">)</span>
+  <span class="p">),</span>
+  <span class="n">sq</span> <span class="k">AS</span>
+  <span class="p">(</span>
+  <span class="k">SELECT</span>
+      <span class="n">EmpYr</span><span class="p">,</span> <span class="n">EmployeeID</span><span class="p">,</span> <span class="n">FullName</span><span class="p">,</span> <span class="n">Office</span> <span class="k">AS</span> <span class="n">OfficeLocation</span><span class="p">,</span> <span class="n">Office_Type</span> <span class="k">AS</span> <span class="n">OfficeType</span><span class="p">,</span> <span class="n">Job_title</span> <span class="k">AS</span> <span class="n">JobTitle</span><span class="p">,</span> <span class="k">level</span> <span class="k">AS</span> <span class="n">ManagementLevel</span><span class="p">,</span> <span class="n">Job_Profile</span> <span class="k">AS</span> <span class="n">JobProfile</span><span class="p">,</span> <span class="n">Department</span><span class="p">,</span>
+      <span class="n">DaysInYear</span><span class="p">,</span> <span class="n">JoinsDate</span><span class="p">,</span> <span class="n">LeavesDate</span><span class="p">,</span>
+      <span class="k">CASE</span> <span class="k">WHEN</span> <span class="n">EmpYr</span> <span class="o">=</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">JoinsDate</span><span class="p">)</span> <span class="k">THEN</span> <span class="mi">1</span> <span class="k">ELSE</span> <span class="mi">0</span> <span class="k">END</span> <span class="k">AS</span> <span class="n">IsJoin</span><span class="p">,</span>
+      <span class="k">CASE</span> <span class="k">WHEN</span> <span class="n">EmpYr</span> <span class="o">=</span> <span class="nb">YEAR</span><span class="p">(</span><span class="n">LeavesDate</span><span class="p">)</span> <span class="k">THEN</span> <span class="mi">1</span> <span class="k">ELSE</span> <span class="mi">0</span> <span class="k">END</span> <span class="k">AS</span> <span class="n">IsLeave</span><span class="p">,</span>
+      <span class="c1">-- convert salary to USD currency</span>
+      <span class="n">ROUND</span><span class="p">(</span>  <span class="k">CASE</span>
+                  <span class="k">WHEN</span> <span class="n">Currency</span> <span class="o">=</span> <span class="s1">'GBP'</span> <span class="k">THEN</span> <span class="n">Annual_salary</span> <span class="o">*</span> <span class="mi">1</span><span class="p">.</span><span class="mi">24</span>
+                  <span class="k">WHEN</span> <span class="n">Currency</span> <span class="o">=</span> <span class="s1">'HKD'</span> <span class="k">THEN</span> <span class="n">Annual_salary</span> <span class="o">*</span> <span class="mi">0</span><span class="p">.</span><span class="mi">13</span>
+                  <span class="k">WHEN</span> <span class="n">Currency</span> <span class="o">=</span> <span class="s1">'JPY'</span> <span class="k">THEN</span> <span class="n">Annual_salary</span> <span class="o">*</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0076</span>
+                  <span class="k">WHEN</span> <span class="n">Currency</span> <span class="o">=</span> <span class="s1">'NOK'</span> <span class="k">THEN</span> <span class="n">Annual_salary</span> <span class="o">*</span> <span class="mi">0</span><span class="p">.</span><span class="mi">095</span>
+                  <span class="k">ELSE</span> <span class="n">Annual_salary</span> <span class="k">END</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">AS</span> <span class="n">AnnualSalaryUSD</span><span class="p">,</span>
+      <span class="c1">-- convert bonus to USD currency</span>
+      <span class="n">ROUND</span><span class="p">(</span>  <span class="k">CASE</span>
+                  <span class="k">WHEN</span> <span class="n">Currency</span> <span class="o">=</span> <span class="s1">'GBP'</span> <span class="k">THEN</span> <span class="n">Annual_salary</span> <span class="o">*</span> <span class="mi">1</span><span class="p">.</span><span class="mi">24</span> <span class="o">*</span> <span class="n">Bonus_pct</span>
+                  <span class="k">WHEN</span> <span class="n">Currency</span> <span class="o">=</span> <span class="s1">'HKD'</span> <span class="k">THEN</span> <span class="n">Annual_salary</span> <span class="o">*</span> <span class="mi">0</span><span class="p">.</span><span class="mi">13</span> <span class="o">*</span> <span class="n">Bonus_pct</span> 
+                  <span class="k">WHEN</span> <span class="n">Currency</span> <span class="o">=</span> <span class="s1">'JPY'</span> <span class="k">THEN</span> <span class="n">Annual_salary</span> <span class="o">*</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0076</span> <span class="o">*</span> <span class="n">Bonus_pct</span>
+                  <span class="k">WHEN</span> <span class="n">Currency</span> <span class="o">=</span> <span class="s1">'NOK'</span> <span class="k">THEN</span> <span class="n">Annual_salary</span> <span class="o">*</span> <span class="mi">0</span><span class="p">.</span><span class="mi">095</span> <span class="o">*</span> <span class="n">Bonus_pct</span>
+                  <span class="k">ELSE</span> <span class="n">Annual_salary</span> <span class="o">*</span> <span class="n">Bonus_pct</span> <span class="k">END</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">AS</span> <span class="n">AnnualBonusUSD</span>
+  <span class="k">FROM</span> <span class="n">cte</span>
+  <span class="p">)</span>
+  <span class="k">SELECT</span> <span class="o">*</span>
+  <span class="k">FROM</span> <span class="n">sq</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h1 id="power-bi-data-sources">Power BI Data Sources</h1>
+
+<p>Dataset from <strong>SSMS database tables</strong>:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">EmployeeTable</code></li>
+  <li><code class="language-plaintext highlighter-rouge">EmployeeDiversity</code></li>
+</ul>
+
+<p>Dataset were generated from <strong>SQL query</strong>:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">AgeGroup</code></li>
+  <li><code class="language-plaintext highlighter-rouge">YearlyEmployeeInformations</code></li>
+</ul>
+
+<h1 id="power-bi-measures-dax">Power BI Measures (DAX)</h1>
+
+<p>There are four-grouped Measures that were created throughout analyzing and visualizing process in this project (Power BI part), which includes:</p>
+
+<h3 id="_headcount-group"><code class="language-plaintext highlighter-rouge">_HeadCount</code> Group</h3>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Head Count</code> (number of employee in the specific period)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Head Count = COUNT(YearlyEmployeeInformations[EmployeeID])
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Male</code> (number of male employee in the specific period)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Male = 
+  CALCULATE([Head Count];
+  FILTER(EmployeeDiversity; EmployeeDiversity[Gender] = "Male"))
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Female</code> (number of female employee in the specific period)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Female = 
+  CALCULATE([Head Count];
+  FILTER(EmployeeDiversity; EmployeeDiversity[Gender] = "Female"))
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Last Year Head Count</code> (number of employee in the last specific period)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Last Year Head Count = 
+  CALCULATE([Head Count]; OFFSET(-1;ALL(YearlyEmployeeInformations[EmpYr])))
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">YoY Head Count</code> (year-on-year, number of employee)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  YoY Head Count = ([Head Count] / [Last Year Head Count])-1
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">YoY Male</code> (year-on-year, number of male employee)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  YoY Male = 
+  CALCULATE([YoY Head Count];
+  FILTER(EmployeeDiversity; EmployeeDiversity[Gender] = "Male"))
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">YoY Female</code> (year-on-year, number of female employee)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  YoY Female = 
+  CALCULATE([YoY Head Count];
+  FILTER(EmployeeDiversity; EmployeeDiversity[Gender] = "Female"))
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Employees with Disability</code> (number of male employee with disability)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Employees with Disability = 
+  CALCULATE(
+      COUNT(YearlyEmployeeInformations[EmployeeID]);
+      FILTER(ALLSELECTED(EmployeeDiversity[Disability]); 
+  		EmployeeDiversity[Disability]=1))
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Veteran Employees</code> (number of veteran employee)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Veteran Employees = 
+  CALCULATE(
+      COUNT(YearlyEmployeeInformations[EmployeeID]);
+      FILTER(ALLSELECTED(EmployeeDiversity[Veteran]);
+  		EmployeeDiversity[Veteran]=1))
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="_headdistinctcount-group"><code class="language-plaintext highlighter-rouge">_HeadDistinctCount</code> Group</h3>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Head Count (Distinct)</code> (number of unique employee in the specific period)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Head Count (Distinct) = DISTINCTCOUNT(YearlyEmployeeInformations[EmployeeID])
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Male (Distinct)</code> (number of unique male employee in the specific period)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Male (Distinct) = 
+  CALCULATE([Head Count (Distinct)];
+  FILTER(EmployeeDiversity; EmployeeDiversity[Gender] = "Male"))
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Female (Distinct)</code> (number of unique female employee in the specific period)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Female (Distinct) = 
+  CALCULATE([Head Count (Distinct)];
+  FILTER(EmployeeDiversity; EmployeeDiversity[Gender] = "Female"))
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="_retentionrate-group"><code class="language-plaintext highlighter-rouge">_RetentionRate</code> Group</h3>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">JoinedEmp</code> (number of new employees)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  JoinedEmp = SUM(YearlyEmployeeInformations[IsJoin])
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">CumulativeJoin</code> (cumulative number of new employees)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  CumulativeJoin = 
+  CALCULATE([JoinedEmp];
+  FILTER(ALL(YearlyEmployeeInformations[EmpYr]);
+  YearlyEmployeeInformations[EmpYr] &lt;= MAX(YearlyEmployeeInformations[EmpYr])))
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">LeftEmp</code> (number of left employees)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  LeftEmp = SUM(YearlyEmployeeInformations[IsLeave])
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">CumulativeLeave</code> (cumulative number of left employees)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  CumulativeLeave = 
+  CALCULATE([LeftEmp];
+  FILTER(ALL(YearlyEmployeeInformations[EmpYr]);
+  YearlyEmployeeInformations[EmpYr] &lt;= MAX(YearlyEmployeeInformations[EmpYr])))
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Leave</code> (negative number of the left employees)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Leave = -1 * [LeftEmp]
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">EndEmp</code> (number of employees at the end of the period)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  EndEmp = [CumulativeJoin] - [CumulativeLeave]
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">StartEmp</code> (number of employees at the beginning of the period)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  StartEmp = 
+  IF(ISBLANK(
+  CALCULATE([EndEmp]; OFFSET(-1;ALLSELECTED(YearlyEmployeeInformations[EmpYr]))));
+  0;
+  CALCULATE([EndEmp]; OFFSET(-1;ALLSELECTED(YearlyEmployeeInformations[EmpYr]))))
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">RetentionRate</code> (retention rate)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  RetentionRate = 
+  IFERROR(
+  IF(
+  ([CumulativeJoin] - [CumulativeLeave] - SUM(YearlyEmployeeInformations[IsJoin])) / [StartEmp] &lt; 0;0;
+  ([CumulativeJoin] - [CumulativeLeave] - SUM(YearlyEmployeeInformations[IsJoin])) / [StartEmp]);
+  (SUM(YearlyEmployeeInformations[IsJoin])) / [JoinedEmp])
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="_salarybonus-group"><code class="language-plaintext highlighter-rouge">_Salary&amp;Bonus</code> Group</h3>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Total Salary</code> (total annual salary)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Total Salary = SUM(YearlyEmployeeInformations[AnnualSalaryUSD])
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Total Bonus</code> (total annual bonus)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Total Bonus = SUM(YearlyEmployeeInformations[AnnualBonusUSD])
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Avg Salary Per Emp</code> (average annual salary per employee)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Avg Salary Per Emp = [Total Salary]/[Head Count]
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Avg Bonus Per Emp</code> (average annual bonus per employee)</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Avg Bonus Per Emp = [Total Bonus]/[Head Count]
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+
+</div>
+
+<div class="pagination">
+  
+  
+    <a href="/2023-03-20/analyzing-unicorn-companies-sql-project" class="right next">Next</a>
+  
+
+  <a href="#" class="top">Top</a>
+</div>
+
+    </main>
+
+    <footer>
+      <span>
+        &copy; <time datetime="2023-06-05 01:29:53 +0800">2023</time> <!--Moh. Agus. <a href="https://github.com/kssim/about-portfolio/">A.P</a> theme by kssim.-->
+      </span>
+    </footer>
+  </body>
+</html>

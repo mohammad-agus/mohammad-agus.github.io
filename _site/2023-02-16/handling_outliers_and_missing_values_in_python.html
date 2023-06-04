@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>M.A.</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" type="text/css" href="/assets/css/fontawesome-all.min.css">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon.ico">
+
+  <!-- Google Analytics -->
+  
+  <script>
+      (function(i, s, o, g, r, a, m) {
+          i['GoogleAnalyticsObject'] = r;
+          i[r] = i[r] || function() {
+              (i[r].q = i[r].q || []).push(arguments)
+          }, i[r].l = 1 * new Date();
+          a = s.createElement(o),
+              m = s.getElementsByTagName(o)[0];
+          a.async = 1;
+          a.src = g;
+          m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', 'G-NKY0QRYQND', 'auto');
+      ga('send', 'pageview');
+
+  </script>
+  
+
+</head>
+
+
+  <body>
+    <nav class="nav">
+      <div class="nav-container">
+        <a href="/">
+          <h2 class="nav-title">M.A.</h2>
+        </a>
+        <ul>
+          <li><a href="/">About</a></li>
+          <li><a href="/portfolio/">Portfolio</a></li>
+        </ul>
+    </div>
+  </nav>
+
+    <main>
+      <div class="post">
+  <h2 class="post-title">Handling Outliers & Missing Values in Python</h2>
+  <div class="post-line"></div>
+
+  <p>When analyzing and modeling data, it’s common to encounter outliers and missing values, which can have a significant impact on the accuracy and validity of the results. Properly addressing these issues is crucial to ensure that the analysis or modeling is based on dependable data. Outliers can distort statistical models and negatively affect prediction accuracy, while missing values can lead to biased or inaccurate results by reducing the completeness of a dataset. Correctly handling these issues is necessary to enhance the precision and reliability of the analysis or modeling.</p>
+
+<p>Python pandas is a powerful data manipulation library that offers various tools for handling outliers and missing values. Python pandas offers numerous methods for addressing missing values, such as replacing them with mean, median, or mode values, or removing them altogether. Moreover, pandas provides several statistical functions to identify and handle outliers. Additionally, pandas provides several statistical functions for detecting and handling outliers, such as the interquartile range method and the Z-score method.</p>
+
+<p>In this tasks, I’m using <a href="https://colab.research.google.com/">Google Colaboratory (CoLab)</a> as the coding environment. Google Colaboratory is a free Jupyter notebook interactive development environment provided by Google.</p>
+
+<p>Download the <a href="https://github.com/mohammad-agus/handling_outliers_and_missing_values_in_python">dataset</a> to follow along.</p>
+
+<h2 id="import-library">Import Library</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="c1"># standardize / convert to z-score
+</span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+
+<span class="c1"># ignore warning
+</span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="p">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s">'ignore'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="handling-outliers">Handling Outliers</h2>
+
+<h3 id="connect-google-drive-to-a-google-colab-notebook">Connect Google Drive to a Google Colab Notebook</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+<span class="n">drive</span><span class="p">.</span><span class="n">mount</span><span class="p">(</span><span class="s">'/content/drive'</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=5&amp;hideInput=true" title="Jovian Viewer" height="107" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<h3 id="read-data-from-google-drive">Read Data from Google Drive</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cust_info</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'/content/drive/MyDrive/Colab Notebooks/dataset_customers/mall_customers_info.csv'</span><span class="p">)</span>
+<span class="n">cust_score</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'/content/drive/MyDrive/Colab Notebooks/dataset_customers/mall_customers_score.csv'</span><span class="p">)</span>
+<span class="n">customer_data_2</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'/content/drive/MyDrive/Colab Notebooks/dataset_customers/customers_data_2.csv'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cust_info</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=8&amp;hideInput=true" title="Jovian Viewer" height="244" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cust_score</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=9&amp;hideInput=true" title="Jovian Viewer" height="244" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">customer_data_2</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=9&amp;hideInput=true" title="Jovian Viewer" height="244" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<h3 id="merge--concat-data">Merge &amp; Concat Data</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">customer_data_1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">cust_info</span><span class="p">,</span><span class="n">cust_score</span><span class="p">[[</span><span class="s">'CustomerID'</span><span class="p">,</span> <span class="s">'Spending Score (1-100)'</span><span class="p">]],</span><span class="n">how</span><span class="o">=</span><span class="s">'inner'</span><span class="p">)</span>
+<span class="n">customer_data_1</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=12&amp;hideInput=true" title="Jovian Viewer" height="244" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">customer_data_1</span><span class="p">.</span><span class="n">shape</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=13&amp;hideInput=true" title="Jovian Viewer" height="80" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cust_df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">concat</span><span class="p">([</span><span class="n">customer_data_1</span><span class="p">,</span> <span class="n">customer_data_2</span><span class="p">])</span>
+<span class="n">cust_df</span><span class="p">.</span><span class="n">shape</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=14&amp;hideInput=true" title="Jovian Viewer" height="80" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<h3 id="outliers-handling-with-inter-quartile-range">Outliers Handling with Inter Quartile Range</h3>
+
+<ul>
+  <li>Duplicate concatenated dataframe.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_iqr_outliers</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">cust_df</span><span class="p">)</span>
+</code></pre></div></div>
+<p><br /></p>
+<ul>
+  <li>Create box plot of df_iqr_outliers dataframe.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_iqr_outliers</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s">'box'</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=19&amp;hideInput=true" title="Jovian Viewer" height="409" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<ul>
+  <li>Calculate inter quartile range to generate the upper limit and the lower limit.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Q1</span> <span class="o">=</span> <span class="n">df_iqr_outliers</span><span class="p">[</span><span class="s">'Annual_Income'</span><span class="p">].</span><span class="n">quantile</span><span class="p">(.</span><span class="mi">25</span><span class="p">)</span>
+<span class="n">Q3</span> <span class="o">=</span> <span class="n">df_iqr_outliers</span><span class="p">[</span><span class="s">'Annual_Income'</span><span class="p">].</span><span class="n">quantile</span><span class="p">(.</span><span class="mi">75</span><span class="p">)</span>
+<span class="n">iqr</span> <span class="o">=</span> <span class="n">Q3</span> <span class="o">-</span> <span class="n">Q1</span>
+<span class="n">up_l</span> <span class="o">=</span> <span class="n">Q3</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">iqr</span>
+<span class="n">lw_l</span> <span class="o">=</span> <span class="n">Q1</span> <span class="o">-</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">iqr</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"upper limit: {} &amp; lower limit: {}"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">up_l</span><span class="p">,</span> <span class="n">lw_l</span><span class="p">))</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=21&amp;hideInput=true" title="Jovian Viewer" height="83" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<ul>
+  <li>Using <code class="language-plaintext highlighter-rouge">np.where</code> to get index of value of Annual_Income column that greater than upper limit.</li>
+</ul>
+
+<p>Because there is no minus value in the Annual_Income column, filtering process to imputate outliers value (replace oultiers with other value) only using the upper limit  value.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">outliers_index</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">where</span><span class="p">(</span><span class="n">df_iqr_outliers</span><span class="p">[</span><span class="s">'Annual_Income'</span><span class="p">]</span><span class="o">&gt;</span><span class="n">up_l</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">outliers_index</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=23&amp;hideInput=true" title="Jovian Viewer" height="83" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<ul>
+  <li>Filter dataframe using index from <code class="language-plaintext highlighter-rouge">np.where</code>.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_iqr_outliers</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">outliers_index</span><span class="p">]</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=25&amp;hideInput=true" title="Jovian Viewer" height="166" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<ul>
+  <li>Replace outliers with mean of Annual_Income column (without filtering outliers).</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_iqr_outliers</span><span class="p">[</span><span class="s">'Annual_Income'</span><span class="p">].</span><span class="n">iloc</span><span class="p">[</span><span class="n">outliers_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_iqr_outliers</span><span class="p">[</span><span class="s">'Annual_Income'</span><span class="p">].</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">df_iqr_outliers</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">outliers_index</span><span class="p">]</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=27&amp;hideInput=true" title="Jovian Viewer" height="166" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<ul>
+  <li>Create box plot using imputated outliers dataframe.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_iqr_outliers</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s">'box'</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=29&amp;hideInput=true" title="Jovian Viewer" height="409" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<h3 id="outliers-handling-using-z-score">Outliers Handling using Z-Score</h3>
+
+<ul>
+  <li>Duplicate concatenated dataframe &amp; create box plot.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_z_score_outliers</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">cust_df</span><span class="p">)</span>
+
+<span class="n">df_z_score_outliers</span><span class="p">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">rot</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=32&amp;hideInput=true" title="Jovian Viewer" height="409" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<ul>
+  <li>Standardizing (convert to z-score).</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scaled_df_z_score_outliers_annual_income</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">().</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df_z_score_outliers</span><span class="p">[</span><span class="s">'Annual_Income'</span><span class="p">].</span><span class="n">values</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+</code></pre></div></div>
+<p><br /></p>
+<ul>
+  <li>Add standardized annual income to df_z_score_outliers dataframe.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_z_score_outliers</span><span class="p">[</span><span class="s">'scaled_Annual_Income'</span><span class="p">]</span> <span class="o">=</span> <span class="n">scaled_df_z_score_outliers_annual_income</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_z_score_outliers</span><span class="p">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">'scaled_Annual_Income'</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=37&amp;hideInput=true" title="Jovian Viewer" height="329" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_z_score_outliers_outliers_removed</span> <span class="o">=</span> <span class="n">df_z_score_outliers</span><span class="p">.</span><span class="n">drop</span><span class="p">(</span><span class="n">df_z_score_outliers</span><span class="p">.</span><span class="n">index</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="n">where</span><span class="p">(</span><span class="n">df_z_score_outliers</span><span class="p">[</span><span class="s">'scaled_Annual_Income'</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">)])</span>
+<span class="n">df_z_score_outliers_outliers_removed</span> <span class="o">=</span> <span class="n">df_z_score_outliers_outliers_removed</span><span class="p">.</span><span class="n">drop</span><span class="p">(</span><span class="s">'scaled_Annual_Income'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_z_score_outliers_outliers_removed</span><span class="p">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">rot</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=39&amp;hideInput=true" title="Jovian Viewer" height="409" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<h2 id="handling-missing-value">Handling Missing Value</h2>
+
+<h4 id="dataframe-example">DataFrame example</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span> <span class="s">"A"</span> <span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+                       <span class="s">"B"</span> <span class="p">:</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">155</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">105</span><span class="p">]</span> <span class="p">})</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=42&amp;hideInput=true" title="Jovian Viewer" height="299" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<h4 id="fill-missing-value-using-mean-or-other-specific-value">Fill missing value using mean (or other specific value)</h4>
+
+<ul>
+  <li>Duplicate data DataFrame.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_v1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+<p><br /></p>
+<ul>
+  <li>Filter null value using isnull() == True.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_v1</span><span class="p">[</span><span class="n">data_v1</span><span class="p">[</span><span class="s">"A"</span><span class="p">].</span><span class="n">isnull</span><span class="p">()</span> <span class="o">==</span> <span class="bp">True</span><span class="p">]</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=47&amp;hideInput=true" title="Jovian Viewer" height="192" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<ul>
+  <li>Calculate mean from existing data in column A that doesn’t have null value.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mean</span> <span class="o">=</span> <span class="n">data_v1</span><span class="p">[</span><span class="s">"A"</span><span class="p">][</span><span class="n">data_v1</span><span class="p">[</span><span class="s">"A"</span><span class="p">].</span><span class="n">isnull</span><span class="p">()</span> <span class="o">==</span> <span class="bp">False</span><span class="p">].</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">mean</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=49&amp;hideInput=true" title="Jovian Viewer" height="80" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<ul>
+  <li>Assign mean as the replacement of missing values in column A.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_v1</span><span class="p">[</span><span class="s">"A"</span><span class="p">][</span><span class="n">data_v1</span><span class="p">[</span><span class="s">"A"</span><span class="p">].</span><span class="n">isnull</span><span class="p">()</span> <span class="o">==</span> <span class="bp">True</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span>
+
+<span class="c1"># or using fillna()
+</span><span class="n">data_v1</span><span class="p">[</span><span class="s">"A"</span><span class="p">].</span><span class="n">fillna</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">data_v1</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=51&amp;hideInput=true" title="Jovian Viewer" height="299" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p>Other value such as median, mode or a specific value can be assign using this method
+<br />
+<br /></p>
+<h4 id="fill-missing-value-using-pandasfillna-methods">Fill missing value using <code class="language-plaintext highlighter-rouge">pandas.fillna</code> methods</h4>
+
+<ul>
+  <li>Duplicate data DataFrame &amp; using numpy.where to return the array index of missing values.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_v2</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="n">np</span><span class="p">.</span><span class="n">where</span><span class="p">(</span><span class="n">data_v2</span><span class="p">[</span><span class="s">'A'</span><span class="p">].</span><span class="n">isnull</span><span class="p">())</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=55&amp;hideInput=true" title="Jovian Viewer" height="80" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<ul>
+  <li>Using array index that has been generated from previous step to subset null value.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_v2</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="n">where</span><span class="p">(</span><span class="n">data_v2</span><span class="p">[</span><span class="s">'A'</span><span class="p">].</span><span class="n">isnull</span><span class="p">())]</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=57&amp;hideInput=true" title="Jovian Viewer" height="192" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p>Input limit paramater to limit the maximum number of consecutive NaN values to forward/backward fill and inplace=True to fill in-place. Other paramaters can be found on <a href="https://pandas.pydata.org/docs/index.html">pandas documentation</a>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">data_v2</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=59&amp;hideInput=true" title="Jovian Viewer" height="299" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<ul>
+  <li>Using <code class="language-plaintext highlighter-rouge">fillna</code> with <code class="language-plaintext highlighter-rouge">ffill</code> or <code class="language-plaintext highlighter-rouge">pad</code>.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_v2</span><span class="p">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s">"pad"</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=61&amp;hideInput=true" title="Jovian Viewer" height="348" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_v2</span><span class="p">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s">"ffill"</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=62&amp;hideInput=true" title="Jovian Viewer" height="348" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<ul>
+  <li>Using <code class="language-plaintext highlighter-rouge">fillna</code> with <code class="language-plaintext highlighter-rouge">backfill</code> or <code class="language-plaintext highlighter-rouge">bfill</code>.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_v2</span><span class="p">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s">"backfill"</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=64&amp;hideInput=true" title="Jovian Viewer" height="348" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_v2</span><span class="p">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s">"bfill"</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=65&amp;hideInput=true" title="Jovian Viewer" height="348" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<h4 id="fill-missing-value-using-pandasinterpolate">Fill missing value using <code class="language-plaintext highlighter-rouge">pandas.interpolate</code></h4>
+<p>Fill NaN values using interpolate method (read <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.interpolate.html#pandas.DataFrame.interpolate">documentation</a>).</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_v3</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">data_v3</span><span class="p">)</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=67&amp;hideInput=true" title="Jovian Viewer" height="299" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_v3</span><span class="p">.</span><span class="n">interpolate</span><span class="p">()</span>
+</code></pre></div></div>
+<iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/handling-outliers-and-missing-values-in-python/v/1&amp;cellId=68&amp;hideInput=true" title="Jovian Viewer" height="348" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
+<p><br /></p>
+
+<p>Thank you for taking the time to read this post. I hope that the information and insights shared in this post have been valuable to you and have provided some helpful perspectives on the topic at hand.</p>
+
+
+</div>
+
+<div class="pagination">
+  
+    <a href="/2023-03-12/performing-linear_regression_ordinary_least_square_using_python_statsmodels" class="left next">Prev</a>
+  
+  
+    <a href="/2022-10-18/exploratory-data-analysis-of-911-calls-data" class="right next">Next</a>
+  
+
+  <a href="#" class="top">Top</a>
+</div>
+
+    </main>
+
+    <footer>
+      <span>
+        &copy; <time datetime="2023-06-05 01:29:53 +0800">2023</time> <!--Moh. Agus. <a href="https://github.com/kssim/about-portfolio/">A.P</a> theme by kssim.-->
+      </span>
+    </footer>
+  </body>
+</html>
