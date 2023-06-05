@@ -14,8 +14,7 @@ The objectives of this project are to analyze human resources dataset and build 
 * Salary Analysis
 * Salary Details (sub-page of Salary Analysis)
 
-<br/>
-<center><iframe title="HRAnalytics" width="927" height="620" src="https://app.powerbi.com/view?r=eyJrIjoiZGU0NmI5MTAtZTFiYy00NGY2LWExYjEtNDkzN2YzMDY4ZTlhIiwidCI6IjA0NmI4YzU4LWFhNTEtNGY2NC04M2RlLWU1NjczZTY0NmY4NiIsImMiOjEwfQ%3D%3D" frameborder="0" allowFullScreen="true"></iframe></center>
+<center><iframe title="HRAnalytics" width="800" height="580" src="https://app.powerbi.com/view?r=eyJrIjoiZGU0NmI5MTAtZTFiYy00NGY2LWExYjEtNDkzN2YzMDY4ZTlhIiwidCI6IjA0NmI4YzU4LWFhNTEtNGY2NC04M2RlLWU1NjczZTY0NmY4NiIsImMiOjEwfQ%3D%3D" frameborder="0" allowFullScreen="true"></iframe></center>
 <br/>
 
 This project dataset consists of the dataset from Kaggle ([The Company](https://www.kaggle.com/datasets/koluit/human-resource-data-set-the-company)) in `.txt` format (imported as the database tables in SQL Server Management Studio or SSMS), and generated dataset from SQL query. All of the data in this project are connected from SQL Server Management Studio to Power BI. Here are the dataset that was imported from the original source on Kaggle to SSMS.
