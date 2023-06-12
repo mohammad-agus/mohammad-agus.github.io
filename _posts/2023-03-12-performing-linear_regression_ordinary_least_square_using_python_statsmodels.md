@@ -7,7 +7,7 @@ type: project, linear regression
 ---
 
 
-The objective of this project is to perform linear regression analysis (ordinary least square technique) using Python Statsmodels to predict the car price, based on the automobile dataset from [UCI Machine Learning repository](https://archive.ics.uci.edu/ml/datasets/automobile), which is a common dataset for regression analysis. The automobile dataset is from the year 1985 which is quite old, but it's suitable for the learning purposes of this project. You can find the project's jupyter notebook and the dataset (if you want to skip extracting step) on my [GitHub repository](https://github.com/mohammad-agus/linear_regression_ordinary_least_square).
+The objective of this project is to perform linear regression analysis (ordinary least square technique) using Statsmodels (a Python library) to predict the car price, based on the automobile dataset from [UCI Machine Learning repository](https://archive.ics.uci.edu/ml/datasets/automobile), which is a common dataset for regression analysis. The automobile dataset is from the year 1985 which is quite old, but it's suitable for the learning purposes of this project. You can find the project's jupyter notebook and the dataset (if you want to skip extracting step) on my [GitHub repository](https://github.com/mohammad-agus/linear_regression_ordinary_least_square).
 
 ### Import Library
 
@@ -561,6 +561,7 @@ melted_data_actual_pred = pd.melt(data_actual_pred.reset_index(),
 
 
 * Create a comparison lineplot of the actual value vs. the predicted value.
+
 ```python
 plt.figure(figsize=(12,8))
 sns.lineplot(data=melted_data_actual_pred, x='index', y='value', hue='variable')
