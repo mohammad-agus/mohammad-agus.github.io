@@ -68,7 +68,7 @@
   <h2 class="post-title">Performing Linear Regression Analysis (Ordinary Least Square) Using Python Statsmodels</h2>
   <div class="post-line"></div>
 
-  <p>The objective of this project is to perform linear regression analysis (ordinary least square technique) using Python Statsmodels to predict the car price, based on the automobile dataset from <a href="https://archive.ics.uci.edu/ml/datasets/automobile">UCI Machine Learning repository</a>, which is a common dataset for regression analysis. The automobile dataset is from the year 1985 which is quite old, but it’s suitable for the learning purposes of this project. You can find the project’s jupyter notebook and the dataset (if you want to skip extracting step) on my <a href="https://github.com/mohammad-agus/linear_regression_ordinary_least_square">GitHub repository</a>.</p>
+  <p>The objective of this project is to perform linear regression analysis (ordinary least square technique) using Statsmodels (a Python library) to predict the car price, based on the automobile dataset from <a href="https://archive.ics.uci.edu/ml/datasets/automobile">UCI Machine Learning repository</a>, which is a common dataset for regression analysis. The automobile dataset is from the year 1985 which is quite old, but it’s suitable for the learning purposes of this project. You can find the project’s jupyter notebook and the dataset (if you want to skip extracting step) on my <a href="https://github.com/mohammad-agus/linear_regression_ordinary_least_square">GitHub repository</a>.</p>
 
 <h3 id="import-library">Import Library</h3>
 
@@ -551,14 +551,14 @@ One‑hot encoding is a converting process to represent categorical variables in
 <p><br /></p>
 
 <ul>
-  <li>Create a comparison lineplot of the actual value vs. the predicted value.
-```python
-plt.figure(figsize=(12,8))
-sns.lineplot(data=melted_data_actual_pred, x=’index’, y=’value’, hue=’variable’)</li>
+  <li>Create a comparison lineplot of the actual value vs. the predicted value.</li>
 </ul>
 
-<p>plt.show()
-```</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+<span class="n">sns</span><span class="p">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">melted_data_actual_pred</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">'index'</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">'value'</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s">'variable'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
 
 <iframe src="https://jovian.com/embed?url=https://jovian.com/mohammadagus1st/linear-regression-ordinary-least-square-using-python-statsmodels-ipynb/v/1&amp;cellId=84&amp;hideInput=true" title="Jovian Viewer" height="473" width="100%" style="margin 0 auto; max-width: 800px;" frameborder="0" scrolling="auto"></iframe>
 
@@ -589,7 +589,7 @@ sns.lineplot(data=melted_data_actual_pred, x=’index’, y=’value’, hue=’
 
 <div class="pagination">
   
-    <a href="/2023-03-20/analyzing-unicorn-companies-sql-project" class="left next">Prev</a>
+    <a href="/2023-04-29/hr-analytics-using-sql-and-powerbi" class="left next">Prev</a>
   
   
     <a href="/2023-02-16/handling_outliers_and_missing_values_in_python" class="right next">Next</a>
@@ -602,7 +602,7 @@ sns.lineplot(data=melted_data_actual_pred, x=’index’, y=’value’, hue=’
 
     <footer>
       <span>
-        &copy; <time datetime="2023-06-06 22:50:58 +0800">2023</time> <!--Moh. Agus. <a href="https://github.com/kssim/about-portfolio/">A.P</a> theme by kssim.-->
+        &copy; <time datetime="2023-06-14 08:05:34 +0800">2023</time> <!--Moh. Agus. <a href="https://github.com/kssim/about-portfolio/">A.P</a> theme by kssim.-->
       </span>
     </footer>
   </body>
